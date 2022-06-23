@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<!-- style=' width: 100%; height: 100%;' -->
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" />
+  <link href="./styles.css" rel="stylesheet" />
+  <title>Unit Link</title>
+</head>
+
+
+<body>
+  <div class="container">
+    <div class="content">
+      <!-- <img src='../../image/UnitLink_Logo.png'> -->
+      <div class='logo'></div>
+      <div id='progress'></div>
+    </div>
+
+
+  </div>
+
+  <script src='https://cdn.jsdelivr.net/npm/hls.js@latest'></script>
+  <script src="./renderer.js">
+  </script>
+  <script type="text/javascript">
+    const { ipcRenderer } = require('electron');
+    const progress = document.getElementById("progress");
+    const ProgressBar = require('progressbar.js');
+    progress.hidden = true;
+
+    const bar = new ProgressBar.Line('#progress', {
+      strokeWidth: 4,
+      easing: 'easeInOut',
+      duration: 1000,
+      color: '#4E3AE2',
+      trailColor: '#eee',
+      trailWidth: 1,
+      svgStyle: { width: '100%', height: '100%' },
+      text: {
+        style: {
+          // Text color.
+          // Default: same as stroke color (options.color)
+          color: '#999',
+          position: 'absolute',
+          padding: 0,
+          margin: 0,
+          transform: null
+        },
+        autoStyleContainer: false
+      },
+      from: { color: '#4E3AE2' },
+      to: { color: '#ED6A5A' },
+      step: (state, bar) => {
+        bar.setText(`Downloading ${Math.round(bar.value() * 100)}  %`);
+      }
+    });
+
+    ipcRenderer.on('setProgressValue', (event, arg) => {
+      progress.hidden = false;
+      bar.animate(arg);
+    });
+  </script>
+</body>
+<style>
+  body {
+    overflow-x: hidden;
+  }
+
+
+  img {
+    position: absolute;
+    width: 400px;
+    height: 80px;
+    /* object-fit: cover; */
+    left: 50px;
+    top: 50px;
+    animation: 2s shake infinite;
+  }
+
+
+  html {
+    /* background-color: white; */
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    width: 540px;
+    /* height: 180px; */
+    height: 230px;
+    background-color: rgba(255, 255, 255, 1.0);
+    box-shadow: 3px 3px 10px 1px black;
+    border-radius: 30px;
+    overflow: hidden;
+  }
+
+  .content {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+
+  }
+
+  .logo {
+    margin-top: -20px;
+    width: 100%;
+    height: 100%;
+    background-size: 500px 100px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-image: url(../../image/UnitLink_Logo.png);
+    animation: 2s shake infinite;
+  }
+
+  #progress {
+    margin-top: -40px;
+    padding-left: 40px;
+
+    width: 460px;
+    height: 8px;
+    position: relative;
+    /* visibility: hidden; */
+  }
+
+  @keyframes shake {
+    90% {
+      transform: rotate(0deg);
+    }
+
+    92% {
+      transform: rotate(7deg);
+    }
+
+    94% {
+      transform: rotate(0deg);
+    }
+
+    96% {
+      transform: rotate(-7deg);
+    }
+
+    98% {
+      transform: rotate(0deg);
+    }
+  }
+</style>
+
+</html>

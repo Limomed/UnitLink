@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<!-- style=' width: 100%; height: 100%;' -->
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" />
+  <link href="./styles.css" rel="stylesheet" />
+  <title>Unit Link</title>
+</head>
+
+
+<body>
+  <form id="loginForm">
+    <div class="mainContents">
+      <div>
+        <div>
+          <img src='../../image/UnitLink_Logo.png'>
+          <!-- <a class="subtitle">로그인</a> -->
+        </div>
+        <div class="inputContainer">
+          <p class="contents_label">아이디</p>
+          <input type="text" name="loginId" id="loginId" />
+        </div>
+        <div class="inputContainer">
+          <p class="contents_label">비밀번호</p>
+          <input type="password" placeholder="****" name="password" id="password" />
+        </div>
+      </div>
+      <div>
+        <button class="ucBtn off-button" type="submit" id="btnLogin">로그인</button>
+      </div>
+      <div>
+        <label class="labelError" id='labelError'></label>
+      </div>
+
+    </div>
+    <a href="#" class="close" id="btnClose" onclick="close()"></a>
+  </form>
+
+  <script src='https://cdn.jsdelivr.net/npm/hls.js@latest'></script>
+  <script src="./renderer.js">
+  </script>
+  <script type="text/javascript">
+    const { ipcRenderer } = require('electron');
+    const loginForm = document.getElementById("loginForm");
+    const idInput = document.getElementById("loginId");
+    const pwdInput = document.getElementById("password");
+    const btnLogin = document.getElementById("btnLogin");
+    const btnClose = document.getElementById("btnClose");
+
+    function onBtn() {
+      if (idInput.value && pwdInput.value) {
+        btnLogin.classList.remove('off-button');
+      } else {
+        btnLogin.classList.add('off-button');
+      }
+    };
+
+    idInput.addEventListener("keyup", onBtn);
+    pwdInput.addEventListener("keyup", onBtn);
+    btnClose.addEventListener("click", () => ipcRenderer.send('closeApp'));
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const account = {
+        id: idInput.value,
+        password: pwdInput.value
+      };
+
+      ipcRenderer.send("checkLogin", account);
+    });
+
+    ipcRenderer.on('setLog', (event, arg) => {
+      console.log('test');
+      alert(arg);
+      document.getElementById('labelError').innerText = arg;
+    });
+
+
+    ipcRenderer.on('loginResult', (event, arg) => {
+      const loginResult = arg;
+      if (loginResult.error) {
+        document.getElementById('labelError').innerText = loginResult.error;
+      } else if (!loginResult) {
+        document.getElementById('labelError').innerText = '아이디 혹은 비밀번호가 일치하지 않습니다.';
+      }
+    });
+  </script>
+</body>
+<style>
+  body {
+    overflow-x: hidden;
+  }
+
+  html {
+    /* background-color: white; */
+    margin: 0;
+    padding: 0;
+  }
+
+  img {
+    display: block;
+    width: 220px;
+    height: 45px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    text-align: center;
+  }
+
+
+  .mainContents {
+    padding: 10px 40px 10px 40px;
+  }
+
+  .subtitle {
+    font-family: Noto Sans KR;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 23px;
+    line-height: 23px;
+    color: #004B44;
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  .inputContainer {
+    height: 90px;
+  }
+
+  .contents_label {
+    font-family: Noto Sans KR;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 15px;
+    line-height: 26px;
+    width: 100%;
+  }
+
+  .ucBtn {
+    width: 100%;
+    height: 6vh;
+    min-height: 45px;
+    border-radius: 5px;
+    font-family: Noto Sans KR;
+    font-style: normal;
+    font-size: max(1.7vh, 13px);
+    /*1.7vh;*/
+    text-align: center;
+    border: 2px solid #004B44;
+    background: rgba(237, 243, 233, 0.5);
+    color: #004B44;
+    cursor: pointer;
+  }
+
+  .off-button {
+    background: #C4C4C4;
+    border-radius: 5px;
+    border: none;
+    color: #fff;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  input::placeholder {
+    color: #C4C4C4;
+  }
+
+  input[type=password] {
+    border-bottom: 2px solid #C4C4C4;
+    box-shadow: 0 1px 0 #C4C4C4;
+    width: 100%;
+    padding: 0px 2px 5px;
+    box-sizing: border-box;
+    border: none;
+  }
+
+  input[type=text] {
+    border-bottom: 2px solid #C4C4C4;
+    box-shadow: 0 1px 0 #C4C4C4;
+    width: 100%;
+    padding: 0px 2px 5px;
+    box-sizing: border-box;
+    border: none;
+    font-size: 1rem;
+  }
+
+  .labelError {
+    color: red;
+    visibility: visible;
+    font-size: 13px;
+  }
+
+  .close {
+    position: absolute;
+    right: 32px;
+    top: 32px;
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+  }
+
+  .close:hover {
+    opacity: 1;
+  }
+
+  .close:before,
+  .close:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 33px;
+    width: 2px;
+    background-color: #333;
+  }
+
+  .close:before {
+    transform: rotate(45deg);
+  }
+
+  .close:after {
+    transform: rotate(-45deg);
+  }
+</style>
+
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" />
+  <link href="./styles.css" rel="stylesheet" />
+  <!-- <title>Unit Link</title> -->
+</head>
+
+
+<body>
+  <!-- <iframe width="100%" height="100%"
+    src="https://www.youtube.com/embed/vo2p352SOaM?rel=0&autoplay=1&showinfo=0&controls=0&loof=1" frameborder="0"
+    allowfullscreen>
+  </iframe> -->
+
+  <video id='videoPlayer' width="100%" height="100%">
+    <!-- <source type='video/mp4; codecs="avc1.42E01E, mp4a.40.2, hvc1, hevc"'> -->
+    <!-- <source src=' C:\\Source\\UnitLink\\video\\1\\steamTest.mp4' type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'> -->
+    Your browser does not support the video tag.
+
+  </video>
+
+  <script src='https://cdn.jsdelivr.net/npm/hls.js@latest'></script>
+  <script src="./renderer.js"></script>
+  <script type="text/javascript">
+    const { ipcRenderer } = require('electron');
+    const path = require('path');
+    const video = document.getElementById('videoPlayer');
+    const videoSrc = '/video/output.m3u8';
+
+    let index = 0;
+
+    ipcRenderer.on('setFileList', (event, arg) => {
+      const fileList = arg;
+      video.setAttribute('src', makePath(fileList[index]));
+      video.setAttribute('type', 'video/mp4; codecs="avc1.42E01E, mp4a.40.2, hvc1, hevc"');
+      video.addEventListener('ended', () => nextVideo(fileList), false);
+      console.log(fileList[index]);
+      video.play();
+
+    });
+
+    function makePath(fileInfo) {
+      return path.join(__dirname, '../../video', fileInfo.AdvertiserId.toString(), fileInfo.Name.toString());
+    }
+
+
+    function nextVideo(fileList) {
+      ipcRenderer.send("playRecord", index);
+
+      if (++index == fileList.length) index = 0; // 전부 돌면 다시 반복
+      video.setAttribute('src', makePath(fileList[index]));
+      console.log(fileList[index]);
+      video.play();
+    }
+
+
+
+
+  </script>
+</body>
+<style>
+  body,
+  html {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+</html>
