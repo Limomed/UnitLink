@@ -5,14 +5,40 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "watch": "nodemon --watch . --exec electron .",
+    "dev": "set NODE_ENV=development&&nodemon --exec electron . ",
+    "pack": "electron-builder",
+    "build:osx": "electron-builder --mac",
+    "deploy": "electron-builder --windows nsis:x64",
+    "babelBuild": "babel ./ -d ./dist/ -w"
+  },
+  "build": {
+    "productName": "UnitLink",
+    "appId": "com.electron.unitLink",
+    "nsis": {
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
+      "oneClick": false
+    },
+    "files": [
+      "!.vscode${/*}"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "requestedExecutionLevel": "requireAdministrator",
+      "icon": "./unitlink256.ico"
+    }
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/limomed/UnitLink.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Limomed Inc.",
+  "license": "Copyright (c) 2022 ",
   "bugs": {
     "url": "https://github.com/limomed/UnitLink/issues"
   },
