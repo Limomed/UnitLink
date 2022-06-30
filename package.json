@@ -13,6 +13,7 @@
     "deploy": "electron-builder --windows nsis:x64",
     "babelBuild": "babel ./ -d ./dist/ -w"
   },
+  
   "build": {
     "productName": "UnitLink",
     "appId": "com.electron.unitLink",
